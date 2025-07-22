@@ -300,17 +300,16 @@
     let strokes = [];
     let drawingStroke = null;
 
-    // Load strokes from Firebase (real-time!)
-    function loadStrokes() {
+    // Live subscription to the strokes right after DOM is loaded
+    window.addEventListener('DOMContentLoaded', function(){
       db.ref('strokes').on('value', snapshot => {
         strokes = [];
         snapshot.forEach(child => strokes.push(child.val()));
         redrawAll();
         renderActions();
       });
-    }
+    });
 
-    // Save single stroke to Firebase
     function saveStrokeToFirebase(stroke) {
       db.ref('strokes').push(stroke);
     }
@@ -532,16 +531,6 @@
       ctx.fillStyle = "#fff0fa";
       ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
     }
-    // ВАЖНО: чтобы логи всегда отображались, нужно подписываться на изменения всегда,
-    // а не только после логина
-    window.addEventListener('DOMContentLoaded', function(){
-      loadStrokes(); // запускаем реальную подписку при запуске страницы (до логина)
-
-      // после логина все равно снова подгружаем, если надо, чтобы юзер-интерфейс обновился
-      nicknameForm.addEventListener('submit', function() {
-        setTimeout(loadStrokes, 250);
-      });
-    });
-  </script>
+  </script> 
 </body>
 </html>
